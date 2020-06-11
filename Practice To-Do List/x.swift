@@ -9,25 +9,47 @@
 import UIKit
 
 class ToDoTableTableViewController: UITableViewController {
+//   commented this out 9 on June 8
+//    func createToDos() -> [ToDo] {
+//
+//      let swift = ToDo()
+//      swift.name = "Learn Swift"
+//      swift.important = true
+//
+//      let dog = ToDo()
+//      dog.name = "Walk the Dog"
+//      // important is set to false by default
+//
+//      return [swift, dog]
+//    }
+    
+    //all the code I did 9 on June 8
+  func getToDos() {
+     if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+
+       if let coreDataToDos = try? context.fetch(ToDoCD.fetchRequest()) as? [ToDoCD] {
+//           if let theToDos = coreDataToDos {
+               toDos = coreDataToDos
+               tableView.reloadData()
+           }
+       }
+     }
    
-    func createToDos() -> [ToDo] {
+    
+    //is this in the right place?
+   var toDos : [ToDoCD] = []
 
-      let swift = ToDo()
-      swift.name = "Learn Swift"
-      swift.important = true
-
-      let dog = ToDo()
-      dog.name = "Walk the Dog"
-      // important is set to false by default
-
-      return [swift, dog]
+    //new code 9 on June 8
+    override func viewWillAppear(_ animated: Bool) {
+      getToDos()
     }
     
-    var toDos : [ToDo] = []
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        toDos = createToDos()
+//        commented this out (below)
+//        toDos = createToDos()
+        //code from 9 on June 8
+//        getToDos()
     }
 
     // MARK: - Table view data source
@@ -56,14 +78,30 @@ class ToDoTableTableViewController: UITableViewController {
 
       let toDo = toDos[indexPath.row]
 
-      if toDo.important {
-        cell.textLabel?.text = "❗️" + toDo.name
-      } else {
-        cell.textLabel?.text = toDo.name
+      if let name = toDo.name {
+        if toDo.important {
+            cell.textLabel?.text = "❗️" + name
+        } else {
+            cell.textLabel?.text = toDo.name
+        }
       }
 
       return cell
     }
+//commented out on June 8 at 9
+//      override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//      let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+//
+//      let toDo = toDos[indexPath.row]
+//
+//      if toDo.important {
+//        cell.textLabel?.text = "❗️" + toDo.name
+//      } else {
+//        cell.textLabel?.text = toDo.name
+//      }
+//
+//      return cell
+//    }
 
     /*
     // Override to support conditional editing of the table view.
@@ -110,16 +148,29 @@ class ToDoTableTableViewController: UITableViewController {
     }
     */
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    if let addVC = segue.destination as? AddToDoViewController {
-      addVC.previousVC = self
+      if let addVC = segue.destination as? AddToDoViewController {
+        addVC.previousVC = self
+      }
+
+      if let completeVC = segue.destination as? CompleteToDoViewController {
+        if let toDo = sender as? ToDoCD {
+          completeVC.selectedToDo = toDo
+          completeVC.previousVC = self
         }
-        if let completeVC = segue.destination as? CompleteToDoViewController {
-           if let toDo = sender as? ToDo {
-             completeVC.selectedToDo = toDo
-             completeVC.previousVC = self
+      }
     }
-        }
-    }
+//commented out on June 8 at 9
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//    if let addVC = segue.destination as? AddToDoViewController {
+//      addVC.previousVC = self
+//        }
+//        if let completeVC = segue.destination as? CompleteToDoViewController {
+//           if let toDo = sender as? ToDo {
+//             completeVC.selectedToDo = toDo
+//             completeVC.previousVC = self
+//    }
+//        }
+//    }
 
    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
